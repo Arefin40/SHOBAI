@@ -57,4 +57,45 @@
          </a>
       </li>
    </ul>
+
+   <div class="px-7 mt-auto">
+      {% if user.is_authenticated %}
+         <div class="relative p-3 flex items-center gap-x-3 rounded-xl bg-white shadow-card w-full">
+            <img src="media/{{ user.image }}"
+                 width="40"
+                 height="40"
+                 alt="Profile Picture"
+                 class="size-11 rounded-full flex-shrink-0 border border-gray-200" />
+
+            <div class="text-left w-full leading-none space-y-1">
+               <p class="font-semibold">{{ user.name }}</p>
+               <p class="text-sm text-muted-foreground">Account Settings</p>
+            </div>
+
+            <button onclick="ShowUserMenu(this)"
+                    class="size-9 rounded-full flex-shrink-0 bg-gray-50 flex items-center justify-center active:scale-75 transition-all">
+               {% include "icons/Menu.html" %}
+            </button>
+
+            <!-- Menu -->
+            <ul id="account-details-menu"
+                class="hidden p-2 absolute inset-x-0 bottom-[calc(100%+0.5rem)] bg-white rounded-lg shadow-card origin-bottom animate-scale-in">
+               <li>
+                  <a href="{% url 'logout' %}"
+                     class="px-2 py-1 w-full inline-flex items-center gap-x-4 hover:bg-accent group rounded-md">
+                     <div class="size-9 flex-center bg-gray-100 rounded-full">{% include "icons/Logout.html" %}</div>
+                     <span>Log out</span>
+                  </a>
+               </li>
+            </ul>
+         </div>
+      {% else %}
+         <div class="flex items-center gap-x-3">
+            <a href="{% url 'login' %}"
+               class="px-4 py-2 w-full bg-primary text-primary-foreground rounded-full flex-center border border-primary">Log in</a>
+            <a href="{% url 'register' %}"
+               class="px-4 py-2 w-full bg-white text-muted-foreground rounded-full flex-center border border-orange-100">Register</a>
+         </div>
+      {% endif %}
+   </div>
 </aside>

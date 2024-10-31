@@ -1,0 +1,82 @@
+{% extends "layouts/auth_layout.html" %}
+{% load static %}
+{% block body %}
+   <main class="min-h-screen grid lg:grid-cols-2 md:gap-y-6 divide-x">
+      <div class="flex flex-col gap-y-8 p-4 sm:p-6">
+         {% include "snippets/Logo.html" with class="h-6" %}
+         <div class="lg:mt-16 mx-auto w-full max-w-lg grid gap-y-8">
+            <div class="flex flex-col space-y-1.5 justify-items-center gap-y-3">
+               <h3 class="tracking-tight text-2xl font-bold text-foreground">Create an account</h3>
+               <p class="text-foreground text-sm sm:text-base">Welcome! Please fill in the details to get started.</p>
+            </div>
+            <div class="pt-3 text-foreground">
+               <div class="grid gap-y-6">
+                  <form method="post">
+                     {% csrf_token %}
+                     <div class="mb-8 grid w-full items-center gap-5">
+                        <!-- First-Name and Last-Name Field -->
+                        <div class="flex flex-wrap gap-5">
+                           <div class="flex-grow space-y-2">
+                              <label for="{{ form.fname.id_for_label }}">First name</label>
+                              {{ form.fname }}
+                              {% if form.fname.errors %}<span class="text-sm text-destructive">{{ form.fname.errors.0 }}</span>{% endif %}
+                           </div>
+                           <div class="flex-grow space-y-2">
+                              <label for="{{ form.lname.id_for_label }}">Last name</label>
+                              {{ form.lname }}
+                              {% if form.lname.errors %}<span class="text-sm text-destructive">{{ form.lname.errors.0 }}</span>{% endif %}
+                           </div>
+                        </div>
+                        <!-- Email Field -->
+                        <div class="w-full flex-grow space-y-2">
+                           <label for="{{ form.email.id_for_label }}">Email</label>
+                           {{ form.email }}
+                           {% if form.email.errors %}<span class="text-sm text-destructive">{{ form.email.errors.0 }}</span>{% endif %}
+                        </div>
+                        <!-- Password Field -->
+                        <div class="group space-y-2">
+                           <label for="{{ form.password.id_for_label }}">Password</label>
+                           <div class="relative w-full">
+                              {{ form.password }}
+                              {% include "snippets/TogglePassword.html" %}
+                           </div>
+                           {% if form.password.errors %}
+                              <ul class="text-sm text-destructive space-y-1">
+                                 {% for error in form.password.errors %}<li class="text-sm text-destructive">{{ error }}</li>{% endfor %}
+                              </ul>
+                           {% elif form.password.help_text %}
+                              <ul class="text-sm text-muted-foreground hidden group-focus-within:block">
+                                 {% for text in form.password.help_text %}<li>{{ text }}</li>{% endfor %}
+                              </ul>
+                           {% endif %}
+                        </div>
+                        <!-- Confirm Password Field -->
+                        <div class="group space-y-2">
+                           <label for="{{ form.confirm_password.id_for_label }}">Confirm Password</label>
+                           <div class="relative w-full">
+                              {{ form.confirm_password }}
+                              {% include "snippets/TogglePassword.html" %}
+                           </div>
+                           {% if form.confirm_password.errors %}
+                              <span class="text-sm text-destructive">{{ form.confirm_password.errors.0 }}</span>
+                           {% endif %}
+                        </div>
+                     </div>
+                     <button type="submit" class="btn btn-primary w-full">Create account</button>
+                  </form>
+               </div>
+            </div>
+            <div class="flex-center gap-x-2 px-3">
+               <span>Already have an account?</span>
+               <div class="inline-block relative">
+                  <a href="{% url 'login' %}" class="text-foreground outline-none">Sign in</a>
+                  {% include "snippets/Underline.html" %}
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="p-4 sm:p-6">
+         <div class="w-full p-12"></div>
+      </div>
+   </main>
+{% endblock body %}

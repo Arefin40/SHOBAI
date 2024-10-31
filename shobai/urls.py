@@ -8,7 +8,10 @@ from . import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.homepage, name="home"),
+    # Include allauth URLs
+    path("accounts/", include("allauth.urls")),
     # == Include the app's URLs ===
+    path("", include("apps.users.urls")),
     # For development only
     path("__reload__/", include("django_browser_reload.urls")),
 ]

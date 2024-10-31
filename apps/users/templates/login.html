@@ -1,0 +1,119 @@
+{% extends "layouts/auth_layout.html" %}
+{% load static %}
+{% load socialaccount %}
+{% block body %}
+   <main class="min-h-screen grid lg:grid-cols-2 md:gap-y-6 divide-x">
+      <div class="flex flex-col gap-y-8 p-4 sm:p-6">
+         {% include "snippets/Logo.html" with class="h-6" %}
+         <div class="lg:mt-16 mx-auto w-full max-w-lg grid gap-y-8">
+            <div class="flex flex-col space-y-1.5 justify-items-center gap-y-3">
+               <h3 class="tracking-tight text-2xl font-bold text-foreground">Login</h3>
+               <p class="text-foreground text-sm sm:text-base">Welcome! Please fill in the details to get started.</p>
+            </div>
+
+            <div class="pt-3 text-foreground">
+               <div class="grid gap-y-6">
+                  {% comment %} Google and Facebook login {% endcomment %}
+                  <div class="grid gap-x-4 gap-y-2 sm:grid-cols-2">
+                     <a href="{% provider_login_url 'google' %}"
+                        class="btn btn-outlined w-full text-sm">
+                        <img src="{% static 'images/Google.svg' %}"
+                             alt="Google"
+                             width="20"
+                             height="20"
+                             class="size-5 fill-current" />
+                        <span>Login in with google</span>
+                     </a>
+                     <a href="{% provider_login_url 'facebook' %}"
+                        class="btn btn-outlined w-full text-sm">
+                        <img src="{% static 'images/Facebook.svg' %}"
+                             alt="Facebook"
+                             width="20"
+                             height="20"
+                             class="size-5 fill-current" />
+                        <span>Login in with facebook</span>
+                     </a>
+                  </div>
+
+                  <div class="flex-center relative">
+                     <span class="absolute inset-x-0 top-1/2 -translate-y-1/2 border-t border-input"></span>
+                     <span class="relative bg-background px-2 text-xs uppercase text-muted-foreground">Or continue with</span>
+                  </div>
+
+                  <form method="post">
+                     {% csrf_token %}
+                     <div class="mb-8 grid w-full items-center gap-y-3">
+                        <div class="space-y-2">
+                           <div class="relative w-full">
+                              <div class="absolute left-3 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center">
+                                 <img src="{% static 'images/User.svg' %}"
+                                      width="16"
+                                      height="16"
+                                      alt="User"
+                                      class="size-4" />
+                              </div>
+                              {{ form.email }}
+                           </div>
+                           {% if form.email.errors %}<span class="text-sm text-destructive">{{ form.email.errors.0 }}</span>{% endif %}
+                        </div>
+                        <div class="space-y-2">
+                           <div class="relative w-full">
+                              <div class="absolute left-3 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center">
+                                 <img src="{% static 'images/Lock.svg' %}"
+                                      width="16"
+                                      height="16"
+                                      alt="Lock"
+                                      class="size-4" />
+                              </div>
+                              {{ form.password }}
+                              {% include "snippets/TogglePassword.html" %}
+                           </div>
+                           {% if form.password.errors %}
+                              <ul class="text-sm text-destructive space-y-1">
+                                 {% for error in form.password.errors %}<li class="text-sm text-destructive">{{ error }}</li>{% endfor %}
+                              </ul>
+                           {% endif %}
+                        </div>
+                        <div class="mt-3 flex flex-wrap items-center justify-between gap-x-6 text-sm">
+                           <div class="space-y-2">
+                              <label class="text-sm font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground flex items-center gap-x-2"
+                                     for="remember">
+                                 <button type="button"
+                                         role="checkbox"
+                                         aria-checked="false"
+                                         data-state="unchecked"
+                                         value="on"
+                                         class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                                         id="remember"></button>
+                                 <input aria-hidden="true"
+                                        tabindex="-1"
+                                        type="checkbox"
+                                        value="on"
+                                        name="remember"
+                                        class="-translate-x-full absolute pointer-events-none opacity-0 m-0 w-4 h-4" />
+                                 Remember me
+                              </label>
+                           </div>
+                           <button class="btn btn-link" type="button">Forgot password?</button>
+                        </div>
+                     </div>
+                     <button type="submit" class="btn btn-primary w-full">Login</button>
+                  </form>
+               </div>
+            </div>
+
+            <div class="flex-center gap-x-2 px-3">
+               <span>Don't have an account?</span>
+               <div class="inline-block relative">
+                  <a href="{% url 'register' %}"
+                     class="text-foreground outline-none bg-red">Create one</a>
+                  {% include "snippets/Underline.html" %}
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="p-4 sm:p-6">
+         <div class="w-full p-12"></div>
+      </div>
+   </main>
+{% endblock body %}
