@@ -1,0 +1,59 @@
+{% extends "layouts/root_layout.html" %}
+
+{% block slot %}
+<section class="col-start-2 col-span-1 bg-white flex rounded-lg shadow-card">
+   <section class="w-full rounded-lg overflow-hidden">
+      <div class="ml-10 mt-10">
+         <h1 class="font-bold text-black text-xl">Manage Orders</h1>
+         <p>View,process,and fulfill customer orders</p>
+      </div>
+      <div class="flex justify-between ml-10 mt-8 mr-5">
+         <div class="">
+            <div role="tablist" class="flex space-x-2 bg-gray-100 rounded-lg w-[284px] h-[42px] p-1">
+               <!-- Today's Order Tab -->
+               <a role="tab" class="flex-1 flex items-center justify-center h-full text-gray-700 bg-white rounded-md hover:bg-gray-200 transition-colors">
+                 Today's Order(10)
+               </a>
+             
+               <!-- All Orders Tab (Active) -->
+               <a role="tab" class="flex-1 flex items-center justify-center h-full text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors">
+                 All Orders
+               </a>
+             </div>
+             
+             
+             
+         </div>
+         <div>
+            <div class="gap-2">
+               <input class="bg-[url('/static/images/Search.svg')] bg-no-repeat bg-[length:16px_16px] bg-[left_8px_center] w-[384px] h-[40px] pl-7 rounded-md" placeholder="search" type="search" name="" id="">
+               <button class="btn w-[96px] h-[40px] rounded-md border-2 border-gray-400">Filters</button>
+               <button class="btn bg-blue-500 text-white  w-[138px] h-[40px] rounded-md">+ Add Product</button>
+            </div>
+         </div>
+      </div>
+      <div>
+         <div>
+            <div>
+               <h6>Customer name</h6>
+            <p></p>
+            </div>
+            <p>New Order</p>
+         </div>
+         <hr>
+         <div>
+            <div>
+               <p>2024-10-15</p>
+            <p>3 items</p>
+            </div>
+            <p>7300 BDT</p>
+         </div>
+      </div>
+   
+   
+      <P>Cancelled</P>
+      <p>Completed</p>
+   </section>
+   
+</section>
+{% endblock slot %}
