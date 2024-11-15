@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     # Project apps
     "apps.users",
     "apps.stores",
+    "apps.products",
     # Allauth apps
     "allauth",
     "allauth.account",
