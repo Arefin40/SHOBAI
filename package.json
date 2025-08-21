@@ -10,6 +10,8 @@
       "format": "prettier --write ."
    },
    "dependencies": {
+      "@auth/core": "0.37.0",
+      "@convex-dev/auth": "^0.0.88",
       "@hookform/resolvers": "^5.2.1",
       "@radix-ui/react-dialog": "^1.1.14",
       "@radix-ui/react-label": "^2.1.7",
@@ -18,6 +20,7 @@
       "class-variance-authority": "^0.7.1",
       "clsx": "^2.1.1",
       "cmdk": "^1.1.1",
+      "convex": "^1.25.4",
       "lucide-react": "^0.539.0",
       "next": "15.4.6",
       "react": "19.1.0",

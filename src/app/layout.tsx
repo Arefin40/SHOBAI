@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Mulish as FontSans, Geist_Mono as FontMono } from "next/font/google";
+import { ConvexClientProvider } from "@/providers/ConvexClientProvider";
 import "./globals.css";
 
 const fontSans = FontSans({
@@ -30,7 +31,7 @@ export default function RootLayout({
          <body
             className={`${fontSans.variable} ${fontMono.variable} min-h-screen font-sans font-medium antialiased`}
          >
-            {children}
+            <ConvexClientProvider>{children}</ConvexClientProvider>
          </body>
       </html>
    );
