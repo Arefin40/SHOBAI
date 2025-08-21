@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
    children
@@ -9,8 +8,6 @@ export default function RootLayout({
 }>) {
    return (
       <section className="grid min-h-screen font-sans antialiased md:gap-y-6 lg:grid-cols-2">
-         <Toaster />
-
          <div className="flex flex-col gap-y-8 p-4 sm:p-6">
             <header>
                <Link href="/" className="flex items-center gap-x-2">
