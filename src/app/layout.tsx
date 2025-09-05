@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { Mulish as FontSans, Geist_Mono as FontMono } from "next/font/google";
 import { ConvexClientProvider } from "@/providers/ConvexClientProvider";
+import { AuthUserProvider } from "@/providers/AuthUserProvider";
+import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import "./globals.css";
 
 const fontSans = FontSans({
@@ -28,13 +30,17 @@ export default function RootLayout({
    children: React.ReactNode;
 }>) {
    return (
-      <html lang="en">
-         <body
-            className={`${fontSans.variable} ${fontMono.variable} min-h-screen font-sans font-medium antialiased`}
-         >
-            <Toaster />
-            <ConvexClientProvider>{children}</ConvexClientProvider>
-         </body>
-      </html>
+      <ConvexAuthNextjsServerProvider>
+         <html lang="en">
+            <body
+               className={`${fontSans.variable} ${fontMono.variable} min-h-screen font-sans font-medium antialiased`}
+            >
+               <Toaster />
+               <ConvexClientProvider>
+                  <AuthUserProvider>{children}</AuthUserProvider>
+               </ConvexClientProvider>
+            </body>
+         </html>
+      </ConvexAuthNextjsServerProvider>
    );
 }

@@ -2,7 +2,6 @@
 
 import React from "react";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
 import { Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logInSchema } from "@/lib/schemas/auth-schema";
@@ -15,7 +14,6 @@ import toast from "react-hot-toast";
 type FormFields = z.infer<typeof logInSchema>;
 
 export default function SignInForm() {
-   const router = useRouter();
    const {
       register,
       handleSubmit,
@@ -31,7 +29,6 @@ export default function SignInForm() {
             flow: "signIn"
          });
          toast.success("Logged in successfully!");
-         router.push("/");
       } catch (error) {
          console.log(error);
          toast.error("Failed to log in!");

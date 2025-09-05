@@ -3,7 +3,6 @@
 import { z } from "zod";
 import React from "react";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { signUpSchema } from "@/lib/schemas/auth-schema";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -15,7 +14,6 @@ import { SignInWithGoogle } from "@/components/oauth/SignInWithGoogle";
 type FormFields = z.infer<typeof signUpSchema>;
 
 export default function SignUpForm() {
-   const router = useRouter();
    const {
       register,
       handleSubmit,
@@ -32,7 +30,6 @@ export default function SignUpForm() {
             flow: "signUp"
          });
          toast.success("Account created successfully");
-         router.push("/");
       } catch (error) {
          console.log(error);
          toast.error("Failed to create an account");
