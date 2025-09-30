@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import { StoreLogo, StoreProduct } from "@/icons";
+import StoreLogo from "@/icons/StoreLogo";
+import StoreProduct from "@/icons/StoreProduct";
 import { cn } from "@/lib/utils";
 
 interface StorePreviewProps {
