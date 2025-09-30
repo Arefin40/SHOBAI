@@ -1,10 +1,14 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
-import { getCurrentUser } from "@/lib/convex";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import UserDropdown from "./DashboardUserDropdown";
 
-async function DashboardUserInfo() {
-   const user = await getCurrentUser();
+function DashboardUserInfo() {
+   const user = useQuery(api.user.getCurrentUser, {});
+
    if (!user) return null;
 
    return (

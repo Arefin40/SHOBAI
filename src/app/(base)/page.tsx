@@ -1,5 +1,5 @@
-import Lorem from "@/components/!Lorem";
 import React from "react";
+import Lorem from "@/components/sample/Lorem";
 
 export default function Home() {
    return (
