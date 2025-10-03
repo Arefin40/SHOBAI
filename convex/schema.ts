@@ -22,7 +22,28 @@ const schema = defineSchema({
    })
       .index("by_userId", ["userId"])
       .index("by_nid", ["nid"])
-      .index("by_status", ["status"])
+      .index("by_status", ["status"]),
+
+   stores: defineTable({
+      merchant: v.id("users"),
+      name: v.string(),
+      slug: v.string(),
+      description: v.string(),
+      logo: v.optional(v.string()),
+      cover: v.optional(v.string()),
+      totalFollowers: v.number(),
+      isActive: v.boolean()
+   })
+      .index("by_merchant", ["merchant"])
+      .index("by_slug", ["slug"]),
+
+   store_followers: defineTable({
+      store: v.id("stores"),
+      follower: v.id("users"),
+      followed_at: v.number()
+   })
+      .index("by_store", ["store"])
+      .index("by_follower", ["follower"])
 });
 
 export default schema;
