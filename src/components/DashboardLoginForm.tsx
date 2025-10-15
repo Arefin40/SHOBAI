@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { CurlyUnderline } from "@/icons";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 type FormFields = z.infer<typeof logInSchema>;
 
@@ -31,7 +32,8 @@ export default function DashboardLoginForm({ formType }: { formType: "merchant" 
          await signIn("password", { email, password, flow: "signIn" });
          router.push("/dashboard");
       } catch (error) {
-         console.error(error);
+         toast.error("Invalid credentials. Please try again.");
+         // console.error(error);
       }
    };
 

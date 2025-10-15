@@ -36,7 +36,8 @@ export function MerchantForm() {
          reset();
          router.push("/merchant-application-submitted");
       } catch (error) {
-         toast.error(error instanceof Error ? error.message : "Failed to submit the application");
+         console.error(error);
+         toast.error("Failed to submit the application");
       }
    };
 

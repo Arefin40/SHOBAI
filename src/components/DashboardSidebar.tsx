@@ -3,11 +3,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useQuery } from "convex/react";
 import { PanelLeft } from "lucide-react";
 import { DashboardBlocks } from "@/icons";
 import { usePathname } from "next/navigation";
-import UserInfo from "@/components/DashboardUserInfo";
+import { api } from "@/convex/_generated/api";
 import { DashboardMenuItems } from "@/lib/data/dashboard";
+import UserInfo from "@/components/DashboardUserInfo";
 
 type DashboardMenuItemProps = React.ComponentProps<"li"> & {
    href: string;
@@ -27,6 +29,7 @@ const DashboardMenuItem: React.FC<DashboardMenuItemProps> = ({
       <li className={cn("group relative", className)} {...props}>
          <Link
             href={href}
+            prefetch={false}
             className={cn(
                "hover:bg-accent hover:text-accent-foreground mx-6 flex items-center gap-3 rounded-md p-2",
                { "bg-accent text-accent-foreground": active }
@@ -44,7 +47,11 @@ const DashboardMenuItem: React.FC<DashboardMenuItemProps> = ({
 
 export default function DashboardSidebar() {
    const pathname = usePathname();
-   const menuItems = DashboardMenuItems["admin"];
+
+   const user = useQuery(api.user.getCurrentUser);
+   if (!user || !user.role) return null;
+   if (!(user.role === "admin" || user.role === "merchant")) return null;
+   const menuItems = DashboardMenuItems[user.role];
 
    return (
       <aside className="border-border fixed top-0 left-0 flex h-screen w-64 flex-col border-r bg-white text-sm xl:w-72 xl:text-base">
@@ -91,7 +98,7 @@ export default function DashboardSidebar() {
             </ul>
          </div>
          <div className="px-6">
-            <UserInfo />
+            <UserInfo user={user} />
          </div>
       </aside>
    );

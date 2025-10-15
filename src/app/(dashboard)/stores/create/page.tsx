@@ -1,21 +1,23 @@
 "use client";
 
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 import { Upload } from "lucide-react";
+import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input, Label, Textarea } from "@/components/ui/form";
+import { uploadImagesToCloudinary } from "@/actions/image-upload";
 import { storeFormSchema, StoreFormValues } from "@/lib/schemas/merchant";
 import StorePreview from "./StorePreview";
-import { cn } from "@/lib/utils";
-import { toast } from "react-hot-toast";
-import { uploadImagesToCloudinary } from "@/actions/image-upload";
-import { createStore } from "@/actions/store";
-import { useRouter } from "next/navigation";
 
 export default function CreateStorePage() {
    const router = useRouter();
+   const createStore = useMutation(api.store.createStore);
 
    const {
       register,
@@ -48,7 +50,7 @@ export default function CreateStorePage() {
       const result = await createStore(data);
       if (result.success) {
          toast.success("Store created successfully");
-         router.push(`/stores/${result.data.slug}`);
+         router.push(`/stores/${result.slug}`);
       } else {
          toast.error("Failed to create store");
       }
@@ -88,6 +90,7 @@ export default function CreateStorePage() {
                         placeholder="Enter store name"
                         {...register("name")}
                         error={errors.name}
+                        autoComplete="off"
                      />
                   </div>
 

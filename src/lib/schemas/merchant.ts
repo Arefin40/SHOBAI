@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { getImageSchema } from "@/lib/schemas/image-schema";
 
 export const merchantFormSchema = z.object({
    name: z
