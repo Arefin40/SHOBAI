@@ -1,5 +1,5 @@
 import { v, ConvexError } from "convex/values";
-import { mutation } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const createStore = mutation({
@@ -37,5 +37,20 @@ export const createStore = mutation({
       });
 
       return { success: true, id: storeId, slug: args.slug };
+   }
+});
+
+export const getMyStore = query({
+   args: {},
+   handler: async (ctx) => {
+      const userId = await getAuthUserId(ctx);
+      if (userId === null) throw new Error("Not authenticated");
+
+      // Find the store where the merchant is the current user
+      const store = await ctx.db
+         .query("stores")
+         .withIndex("by_merchant", (q) => q.eq("merchant", userId))
+         .unique();
+      return store;
    }
 });
