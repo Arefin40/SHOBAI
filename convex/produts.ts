@@ -50,3 +50,27 @@ export const createProduct = mutation({
    }
 });
 
+export const getMyStoreProducts = query({
+   args: {},
+   handler: async (ctx) => {
+      // Check if user is authenticated
+      const userId = await getAuthUserId(ctx);
+      if (!userId) throw new ConvexError("Unauthorized");
+
+      // Find the store for the current merchant
+      const store = await ctx.db
+         .query("stores")
+         .withIndex("by_merchant", (q) => q.eq("merchant", userId))
+         .unique();
+      if (!store) throw new ConvexError("Store not found");
+
+      // Get products for this store
+      const products = await ctx.db
+         .query("products")
+         .withIndex("by_storeId", (q) => q.eq("storeId", store._id))
+         .order("desc")
+         .collect();
+
+      return products;
+   }
+});
