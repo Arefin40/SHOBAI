@@ -17,6 +17,7 @@ function StorePreview({ storeName, storeSlug, storeCover, storeLogo }: StorePrev
          <div className="w-full rounded-lg">
             <div className="relative w-full overflow-hidden rounded-t-lg bg-[#EAE9E5]">
                <Image
+                  priority
                   src={storeCover || "/images/StoreCover.svg"}
                   alt="Store cover"
                   width={1600}

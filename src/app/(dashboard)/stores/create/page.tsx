@@ -34,7 +34,7 @@ export default function CreateStorePage() {
          const formData = new FormData();
          formData.append("image", data.logo);
          if (data.cover) formData.append("image", data.cover);
-         formData.append("upload_preset", "shobai");
+         formData.append("upload_preset", "shobai-sme");
 
          try {
             const imageUrls = await uploadImagesToCloudinary(formData);
@@ -115,7 +115,7 @@ export default function CreateStorePage() {
 
                   {/* Store Logo */}
                   <div className="space-y-2">
-                     <Label>Store Logo</Label>
+                     <Label htmlFor="logo">Store Logo</Label>
                      <div
                         className={cn(
                            "relative flex size-36 items-center justify-center rounded-full border-2 border-gray-300 transition-colors hover:border-gray-400",
@@ -126,6 +126,7 @@ export default function CreateStorePage() {
                         )}
                      >
                         <input
+                           id="logo"
                            type="file"
                            className="absolute inset-0 cursor-pointer opacity-0"
                            {...register("logo")}
@@ -158,7 +159,7 @@ export default function CreateStorePage() {
 
                   {/* Store Cover */}
                   <div className="space-y-2">
-                     <Label>Store Cover</Label>
+                     <Label htmlFor="cover">Store Cover</Label>
                      <div
                         className={cn(
                            "relative flex w-full flex-col items-center gap-y-2 overflow-hidden rounded-md border-2 border-gray-300 p-4 transition-colors hover:border-gray-400",
@@ -169,6 +170,7 @@ export default function CreateStorePage() {
                         )}
                      >
                         <input
+                           id="cover"
                            type="file"
                            className="absolute inset-0 cursor-pointer opacity-0"
                            {...register("cover")}
