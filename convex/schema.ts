@@ -43,7 +43,26 @@ const schema = defineSchema({
       followed_at: v.number()
    })
       .index("by_store", ["store"])
-      .index("by_follower", ["follower"])
+      .index("by_follower", ["follower"]),
+
+   products: defineTable({
+      storeId: v.id("stores"),
+      name: v.string(),
+      image: v.optional(v.string()),
+      category: v.string(),
+      description: v.string(),
+      price: v.number(),
+      stock: v.number(),
+      total_sales: v.number(),
+      total_reviews: v.number(),
+      total_likes: v.number(),
+      isActive: v.boolean()
+   }).index("by_storeId", ["storeId"]),
+
+   product_images: defineTable({
+      productId: v.id("products"),
+      image: v.string()
+   }).index("by_product", ["productId"])
 });
 
 export default schema;

@@ -18,7 +18,10 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({
    ...props
 }) => {
    return (
-      <main className={cn("scroll-hide flex flex-col overflow-y-auto pb-6", className)} {...props}>
+      <main
+         className={cn("scroll-hide flex h-full flex-col overflow-y-auto pb-6", className)}
+         {...props}
+      >
          <header className="sticky top-0 z-50 flex items-center justify-between bg-white/75 p-6 backdrop-blur-3xl">
             <div className="flex flex-col gap-2">
                <h1 data-testid="dashboard-page-title" className="text-xl font-bold">
@@ -30,7 +33,7 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({
             {actions}
          </header>
 
-         <main className={cn("flex-1 px-6", mainClassName)}>{children}</main>
+         <main className={cn("flex flex-1 grow flex-col px-6", mainClassName)}>{children}</main>
       </main>
    );
 };
