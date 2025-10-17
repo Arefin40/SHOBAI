@@ -57,7 +57,17 @@ export const getAllProductsWithStore = query({
       return await Promise.all(
          products.map(async (product) => {
             const store = await ctx.db.get(product.storeId);
-            return { ...product, store };
+            return {
+               id: product._id,
+               name: product.name,
+               image: product.image,
+               price: product.price,
+               store: {
+                  slug: store?.slug,
+                  name: store?.name,
+                  logo: store?.logo
+               }
+            };
          })
       );
    }
