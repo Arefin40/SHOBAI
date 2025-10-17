@@ -62,7 +62,23 @@ const schema = defineSchema({
    product_images: defineTable({
       productId: v.id("products"),
       image: v.string()
-   }).index("by_product", ["productId"])
+   }).index("by_product", ["productId"]),
+
+   posts: defineTable({
+      storeId: v.id("stores"),
+      content: v.string(),
+      total_likes: v.number()
+   }).index("by_post_store", ["storeId"]),
+
+   post_products: defineTable({
+      postId: v.id("posts"),
+      productId: v.id("products")
+   }).index("by_post_product", ["postId"]),
+
+   post_likes: defineTable({
+      postId: v.id("posts"),
+      userId: v.id("users")
+   }).index("by_like_post", ["postId"])
 });
 
 export default schema;
