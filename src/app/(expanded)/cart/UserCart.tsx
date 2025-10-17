@@ -4,10 +4,10 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { EmptyCart } from "@/icons";
-import { api } from "@/convex/_generated/api";
-import { Preloaded, usePreloadedQuery } from "convex/react";
-import { ArrowLeft, ArrowRight, Minus, Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/form";
+import { api } from "@/convex/_generated/api";
+import { Preloaded, useMutation, usePreloadedQuery } from "convex/react";
+import { ArrowLeft, ArrowRight, Minus, Plus, Trash2 } from "lucide-react";
 import CartLoading from "./CartLoading";
 
 type PreloadedCart = {
@@ -16,6 +16,8 @@ type PreloadedCart = {
 
 function UserCart({ preloadedCart }: PreloadedCart) {
    const cart = usePreloadedQuery(preloadedCart);
+   const cleartCart = useMutation(api.cart.clearCart);
+
    if (cart === undefined) return <CartLoading />;
    if (!cart.totalQuantity) return <EmptyState />;
 
@@ -31,6 +33,7 @@ function UserCart({ preloadedCart }: PreloadedCart) {
                   </p>
                   <div className="h-8 w-[1px] bg-gray-200"></div>
                   <button
+                     onClick={() => cleartCart({ id: cart.id })}
                      data-testid="clear-cart-button"
                      className="hover:text-primary transition-colors"
                   >

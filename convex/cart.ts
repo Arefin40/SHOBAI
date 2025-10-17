@@ -43,7 +43,7 @@ export const addToCart = mutation({
       // Check if cartItem already exists
       const cartItem = await ctx.db
          .query("cart_items")
-         .withIndex("by_cartitem_cardId", (q) => q.eq("cartId", cart._id))
+         .withIndex("by_cartitem_cartId", (q) => q.eq("cartId", cart._id))
          .filter((q) => q.eq(q.field("productId"), args.productId))
          .first();
 
@@ -86,12 +86,12 @@ export const getCart = query({
          .first();
 
       // If cart doesn't exists, return empty cart
-      if (!cart) return { totalQuantity: 0, totalPrice: 0, items: [] };
+      if (!cart) throw new ConvexError("Cart not found");
 
       // If the cart exists, then get all cart items for this cart
       const cartItems = await ctx.db
          .query("cart_items")
-         .withIndex("by_cartitem_cardId", (q) => q.eq("cartId", cart._id))
+         .withIndex("by_cartitem_cartId", (q) => q.eq("cartId", cart._id))
          .collect();
 
       // Fetch product details of each cart item
@@ -109,9 +109,41 @@ export const getCart = query({
       }
 
       return {
+         id: cart._id,
          totalPrice: cart.totalPrice,
          totalQuantity: cart.totalQuantity,
          items: products
       };
+   }
+});
+
+export const clearCart = mutation({
+   args: {
+      id: v.id("cart")
+   },
+   handler: async (ctx, { id }) => {
+      // Check if the user is authenticated
+      const userId = await getAuthUserId(ctx);
+      if (!userId) throw new ConvexError("Unauthorized");
+
+      // Check if the cart exists
+      const cart = await ctx.db.get(id);
+      if (!cart) throw new ConvexError("Cart not found");
+
+      // Check if the cart belongs to the user
+      if (cart.userId !== userId) throw new ConvexError("Unauthorized");
+
+      // Find and delete all cart items related to this cart
+      const cartItems = await ctx.db
+         .query("cart_items")
+         .withIndex("by_cartitem_cartId", (q) => q.eq("cartId", id))
+         .collect();
+
+      for (const item of cartItems) {
+         await ctx.db.delete(item._id);
+      }
+
+      await ctx.db.patch(id, { totalPrice: 0, totalQuantity: 0 });
+      return true;
    }
 });
