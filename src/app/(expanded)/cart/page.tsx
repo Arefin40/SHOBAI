@@ -1,18 +1,18 @@
 import { preloadQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
-import WishlistProducts from "./WishlistProducts";
+import UserCart from "./UserCart";
 
 async function WishlistPage() {
-   const preloadedWishlistItems = await preloadQuery(
-      api.wishlist.getWishlistItems,
+   const preloadedCart = await preloadQuery(
+      api.cart.getCart,
       {},
       { token: await convexAuthNextjsToken() }
    );
 
    return (
       <main className="h-screen overflow-hidden bg-gray-100 pt-20 pb-6">
-         <WishlistProducts preloadedWishlistItems={preloadedWishlistItems} />
+         <UserCart preloadedCart={preloadedCart} />
       </main>
    );
 }

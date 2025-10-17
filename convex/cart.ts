@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const addToCart = mutation({
@@ -69,5 +69,49 @@ export const addToCart = mutation({
       });
 
       return true;
+   }
+});
+
+export const getCart = query({
+   args: {},
+   handler: async (ctx) => {
+      // Check if the user is authenticated
+      const userId = await getAuthUserId(ctx);
+      if (!userId) throw new ConvexError("Unauthorized");
+
+      // Get the user's cart
+      const cart = await ctx.db
+         .query("cart")
+         .withIndex("by_cart_userId", (q) => q.eq("userId", userId))
+         .first();
+
+      // If cart doesn't exists, return empty cart
+      if (!cart) return { totalQuantity: 0, totalPrice: 0, items: [] };
+
+      // If the cart exists, then get all cart items for this cart
+      const cartItems = await ctx.db
+         .query("cart_items")
+         .withIndex("by_cartitem_cardId", (q) => q.eq("cartId", cart._id))
+         .collect();
+
+      // Fetch product details of each cart item
+      const products = [];
+      for (const p of cartItems) {
+         const prod = await ctx.db.get(p.productId);
+         if (prod)
+            products.push({
+               id: prod._id,
+               name: prod.name,
+               image: prod.image,
+               quantity: p.quantity,
+               price: prod.price
+            });
+      }
+
+      return {
+         totalPrice: cart.totalPrice,
+         totalQuantity: cart.totalQuantity,
+         items: products
+      };
    }
 });

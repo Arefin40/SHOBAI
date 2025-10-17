@@ -7,11 +7,11 @@ import { api } from "@/convex/_generated/api";
 import { Preloaded, useMutation, usePreloadedQuery } from "convex/react";
 import ProductCard from "@/components/ProductCard";
 
-type preloadedWishlistItems = {
+type PreloadedWishlistItems = {
    preloadedWishlistItems: Preloaded<typeof api.wishlist.getWishlistItems>;
 };
 
-export default function WishlistProducts({ preloadedWishlistItems }: preloadedWishlistItems) {
+export default function WishlistProducts({ preloadedWishlistItems }: PreloadedWishlistItems) {
    const wishlistItems = usePreloadedQuery(preloadedWishlistItems);
    const clearWishlist = useMutation(api.wishlist.clearWishlist);
 
