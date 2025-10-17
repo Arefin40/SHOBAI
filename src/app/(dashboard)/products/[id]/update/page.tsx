@@ -121,12 +121,14 @@ export default function UpdateProduct() {
                      placeholder="Enter product name"
                      {...register("name")}
                      error={errors.name}
+                     autoComplete="off"
                   />
                   <Input
                      label="Category"
                      placeholder="Enter category"
                      {...register("category")}
                      error={errors.category}
+                     autoComplete="off"
                   />
                   <div className="grid grid-cols-2 gap-6">
                      <Input
@@ -149,16 +151,18 @@ export default function UpdateProduct() {
                      />
                   </div>
                   <Input
-                     label="Product Image"
                      type="file"
                      accept="image/*"
+                     name="main-image"
+                     label="Product Image"
                      onChange={handleImageChange}
                   />
                   <Input
-                     label="Additional Images"
                      type="file"
-                     accept="image/*"
                      multiple
+                     accept="image/*"
+                     name="additional-images"
+                     label="Additional Images"
                      onChange={handleAdditionalImagesChange}
                   />
                   <div className="space-y-2">
@@ -194,8 +198,10 @@ export default function UpdateProduct() {
                         {mainImagePreview ? (
                            <Image
                               fill
+                              priority
                               src={mainImagePreview}
                               alt="Product preview"
+                              sizes="100% 100%"
                               className="border-border border object-cover object-top"
                            />
                         ) : (
@@ -218,7 +224,9 @@ export default function UpdateProduct() {
                               >
                                  <Image
                                     fill
+                                    priority
                                     src={img}
+                                    sizes="100% 100%"
                                     alt={`Additional image ${idx + 1}`}
                                     className="border-border border object-cover object-top"
                                  />

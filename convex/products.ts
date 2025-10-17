@@ -124,6 +124,7 @@ export const updateProduct = mutation({
       data: v.object({
          name: v.optional(v.string()),
          image: v.optional(v.string()),
+         images: v.optional(v.array(v.string())),
          category: v.optional(v.string()),
          description: v.optional(v.string()),
          price: v.optional(v.number()),
@@ -134,9 +135,11 @@ export const updateProduct = mutation({
    },
    handler: async (ctx, { id, data }) => {
       try {
-         await ctx.db.patch(id, data);
+         const { images, ...restData } = data;
+         await ctx.db.patch(id, restData);
          return { success: true, message: "Product updated successfully" };
       } catch (error) {
+         console.log(error);
          throw new ConvexError("Failed to update product");
       }
    }

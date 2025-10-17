@@ -27,7 +27,7 @@ export default function CreatePostPage() {
    const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
    const products = useQuery(api.products.getMyStoreProducts);
-   const createPost = useMutation(api.social.createPost);
+   const createPost = useMutation(api.posts.createPost);
 
    const {
       register,
@@ -42,7 +42,6 @@ export default function CreatePostPage() {
       }
    });
 
-   // Simplified and guarded toggle product selection
    const handleProductSelect = (productId: Id<"products">) => {
       setSelectedProducts((prev) => {
          let newSelection;
@@ -106,7 +105,7 @@ export default function CreatePostPage() {
          title="Create Post"
          description="Share updates and products with your followers"
       >
-         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-2">
             <div className="grid gap-6">
                <div className="max-w-4xl">
                   <Textarea
@@ -128,33 +127,47 @@ export default function CreatePostPage() {
                            type="button"
                            key={product._id}
                            onClick={() => handleProductSelect(product._id)}
-                           className={`relative cursor-pointer rounded-lg border-2 transition-all focus:outline-none ${
-                              selectedProducts.includes(product._id)
-                                 ? "border-primary ring-primary bg-primary/10 ring-2"
-                                 : "border-gray-200 hover:bg-gray-50"
-                           }`}
+                           className="relative aspect-square w-full cursor-pointer overflow-hidden rounded-lg transition-all focus:outline-none"
                            tabIndex={0}
                            aria-pressed={selectedProducts.includes(product._id)}
                            disabled={loading}
                         >
-                           <div className="relative aspect-square w-full overflow-hidden">
-                              {product.image ? (
-                                 <Image
-                                    fill
-                                    src={product.image}
-                                    alt={product.name || "Product"}
-                                    className="rounded-md object-cover object-top"
-                                    sizes="200px"
-                                 />
-                              ) : (
-                                 <div className="flex h-full items-center justify-center bg-gray-100 text-gray-400">
-                                    No Image
-                                 </div>
-                              )}
-                           </div>
-                           <div className="w-full truncate px-2 py-2 text-center text-sm">
-                              {product.name ?? "Unnamed"}
-                           </div>
+                           {product.image ? (
+                              <Image
+                                 fill
+                                 src={product.image}
+                                 alt={product.name || "Product"}
+                                 className="object-cover object-top"
+                                 sizes="200px"
+                              />
+                           ) : (
+                              <div className="flex h-full items-center justify-center bg-gray-100 text-gray-400">
+                                 No Image
+                              </div>
+                           )}
+
+                           {selectedProducts.includes(product._id) && (
+                              <div className="flex-center absolute inset-0 bg-black/50 py-2">
+                                 <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="fill-current text-emerald-500"
+                                 >
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path
+                                       fill="none"
+                                       className="stroke-current text-white"
+                                       d="m9 12 2 2 4-4"
+                                    ></path>
+                                 </svg>
+                              </div>
+                           )}
                         </button>
                      ))}
                   </div>

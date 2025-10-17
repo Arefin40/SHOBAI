@@ -87,11 +87,9 @@ function StoreProducts({
          </table>
       </div>
    ) : (
-      <>
-         <div className="flex-center text-muted-foreground h-full flex-1 grow">
-            You have&apos;t added any product yet
-         </div>
-      </>
+      <div className="flex-center text-muted-foreground h-full flex-1 grow">
+         You have&apos;t added any product yet
+      </div>
    );
 }
 
