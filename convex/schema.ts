@@ -78,7 +78,10 @@ const schema = defineSchema({
    post_likes: defineTable({
       postId: v.id("posts"),
       userId: v.id("users")
-   }).index("by_like_post", ["postId"])
+   })
+      .index("by_user_post", ["userId", "postId"])
+      .index("by_reacted_user", ["userId"])
+      .index("by_like_post", ["postId"])
 });
 
 export default schema;

@@ -36,7 +36,7 @@ export const getAllPosts = query({
       const posts = await ctx.db.query("posts").order("desc").collect();
 
       // For each post, fetch store and products
-      const result = [];
+      const allPosts = [];
       for (const post of posts) {
          const store = await ctx.db.get(post.storeId);
 
@@ -51,9 +51,9 @@ export const getAllPosts = query({
             if (prod) products.push(prod);
          }
 
-         result.push({ ...post, store, products });
+         allPosts.push({ ...post, store, products });
       }
-      return { success: true, data: result };
+      return allPosts;
    }
 });
 
@@ -132,5 +132,53 @@ export const getMyStorePosts = query({
       }
 
       return storePosts;
+   }
+});
+
+export const toggleLikePost = mutation({
+   args: { postId: v.id("posts") },
+   handler: async (ctx, { postId }) => {
+      // Check if the user is authenticated
+      const userId = await getAuthUserId(ctx);
+      if (!userId) throw new ConvexError({ status: 401, message: "Unauthorized" });
+
+      // Check if the post exists
+      const post = await ctx.db.get(postId);
+      if (!post) throw new ConvexError("Post not found");
+
+      // Check if user has already liked the post
+      const alreadyLiked = await ctx.db
+         .query("post_likes")
+         .withIndex("by_user_post", (q) => q.eq("userId", userId).eq("postId", postId))
+         .unique();
+
+      // Insert or Delete post like (toggle)
+      let message = "";
+      if (alreadyLiked) {
+         await ctx.db.delete(alreadyLiked._id);
+         await ctx.db.patch(postId, { total_likes: Math.max(0, post.total_likes - 1) });
+         message = "Post has been liked successfully";
+      } else {
+         await ctx.db.insert("post_likes", { postId, userId });
+         await ctx.db.patch(postId, { total_likes: post.total_likes + 1 });
+         message = "Post has been unliked successfully";
+      }
+
+      return { success: true, message };
+   }
+});
+
+export const getLikedPosts = query({
+   args: {},
+   handler: async (ctx) => {
+      const userId = await getAuthUserId(ctx);
+      if (!userId) throw new ConvexError({ status: 401, message: "Unauthorized" });
+
+      const likes = await ctx.db
+         .query("post_likes")
+         .withIndex("by_reacted_user", (q) => q.eq("userId", userId))
+         .collect();
+
+      return likes.map((like) => like.postId);
    }
 });
