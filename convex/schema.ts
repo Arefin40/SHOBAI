@@ -88,7 +88,19 @@ const schema = defineSchema({
       productId: v.id("products")
    })
       .index("by_wishlist_user", ["userId", "productId"])
-      .index("by_wishlist_userId", ["userId"])
+      .index("by_wishlist_userId", ["userId"]),
+
+   cart: defineTable({
+      userId: v.id("users"),
+      totalQuantity: v.number(),
+      totalPrice: v.number()
+   }).index("by_cart_userId", ["userId"]),
+
+   cart_items: defineTable({
+      cartId: v.id("cart"),
+      productId: v.id("products"),
+      quantity: v.number()
+   }).index("by_cartitem_cardId", ["cartId"])
 });
 
 export default schema;
