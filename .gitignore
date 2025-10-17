@@ -12,6 +12,7 @@
 bun.*
 *.lock
 *.lockb
+*lock.json
 /**/!*
 
 # testing

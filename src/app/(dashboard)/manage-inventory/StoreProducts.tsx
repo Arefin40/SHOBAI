@@ -45,9 +45,9 @@ function StoreProducts({
                            <Image
                               src={product.image || "/images/product.png"}
                               alt={product.name}
-                              width={48}
-                              height={48}
-                              className="rounded-md"
+                              width={56}
+                              height={56}
+                              className="size-14 rounded-md object-cover object-top"
                            />
                            <div>
                               <p className="text-sm font-medium">{product.name}</p>

@@ -3,37 +3,55 @@
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
-import { useMutation } from "convex/react";
-import { useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
+import { useMutation, useQuery } from "convex/react";
+import { useRouter, useParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useEffect, ChangeEvent } from "react";
 import { Input, Label, Textarea } from "@/components/ui/form";
 import { uploadImagesToCloudinary } from "@/actions/image-upload";
 import { productFormSchema, ProductFormValues } from "@/lib/schemas/product";
-import React, { useState, ChangeEvent } from "react";
-import DashboardContainer from "@/components/DashboardContainer";
 import { imageFilesToPreviews, imageFileToPreview } from "@/lib/utils";
+import DashboardContainer from "@/components/DashboardContainer";
+import type { Id } from "@/convex/_generated/dataModel";
 
-export default function AddProduct() {
-   const createProduct = useMutation(api.products.createProduct);
+export default function UpdateProduct() {
+   const { id } = useParams();
    const router = useRouter();
+   const resolvedProductId = id as Id<"products">;
+   const updateProduct = useMutation(api.products.updateProduct);
+   const product = useQuery(api.products.getProductById, { id: resolvedProductId });
+
    const {
       register,
       handleSubmit,
+      setValue,
       watch,
       formState: { errors }
    } = useForm<ProductFormValues>({
-      resolver: zodResolver(productFormSchema),
-      defaultValues: { price: 0, stock: 0 }
+      resolver: zodResolver(productFormSchema)
    });
 
    const formValues = watch();
-   const [mainImage, setMainImage] = useState<File | undefined>();
+   const [mainImage, setMainImage] = useState<File>();
    const [mainImagePreview, setMainImagePreview] = useState<string | null>(null);
    const [additionalImages, setAdditionalImages] = useState<File[]>([]);
    const [additionalImagesPreview, setAdditionalImagesPreview] = useState<string[]>([]);
    const [loading, setLoading] = useState(false);
+
+   // Prefill form and image previews from product data
+   useEffect(() => {
+      if (product && !Array.isArray(product)) {
+         setValue("name", product.name);
+         setValue("category", product.category);
+         setValue("description", product.description);
+         setValue("price", product.price);
+         setValue("stock", product.stock);
+         setMainImagePreview(product.image || null);
+         setAdditionalImagesPreview(product.images || []);
+      }
+   }, [product, setValue]);
 
    const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -48,46 +66,53 @@ export default function AddProduct() {
    };
 
    async function onSubmit(values: ProductFormValues) {
-      if (!mainImage) return;
-
       setLoading(true);
       try {
-         const formData = new FormData();
-         formData.append("image", mainImage);
-         additionalImages.forEach((img) => formData.append("image", img));
-         formData.append("upload_preset", "shobai-sme");
+         let mainImageUrl = product?.image || "";
+         let otherImages = product?.images || [];
 
-         const imageUrls = await uploadImagesToCloudinary(formData);
-         if (imageUrls.success && imageUrls.urls) {
-            values.image = imageUrls.urls[0];
-            if (imageUrls.urls.length > 1) {
-               values.images = imageUrls.urls.slice(1);
+         // If uploading new images, update URLs
+         if (mainImage || additionalImages.length > 0) {
+            const formData = new FormData();
+            if (mainImage) formData.append("image", mainImage);
+            additionalImages.forEach((img) => formData.append("image", img));
+            formData.append("upload_preset", "shobai-sme");
+            const { success, urls } = await uploadImagesToCloudinary(formData);
+            if (success && urls) {
+               if (mainImage) {
+                  mainImageUrl = urls[0];
+                  otherImages = urls.slice(1);
+               } else {
+                  otherImages = urls;
+               }
             }
          }
 
-         const response = await createProduct({
+         const updateData = {
             ...values,
-            image: values.image,
-            images: values.images || []
+            image: mainImageUrl,
+            images: otherImages
+         };
+
+         await updateProduct({
+            id: resolvedProductId,
+            data: updateData
          });
 
-         if (response.success) {
-            toast.success(response.message);
-            router.push("/manage-inventory");
-         }
+         toast.success("Product updated successfully");
+         router.push("/manage-inventory");
       } catch (error) {
-         if (error instanceof Error) {
-            toast.error(error.message);
-         } else {
-            toast.error("Failed to add product");
-         }
+         toast.error("Failed to update product");
       } finally {
          setLoading(false);
       }
    }
 
+   const displayValue = <T,>(formVal: T | undefined, prodVal: T | undefined, fallback: T) =>
+      formVal ?? prodVal ?? fallback;
+
    return (
-      <DashboardContainer title="Add Product" description="Create a new product for your store">
+      <DashboardContainer title="Update Product" description="Edit your product details">
          <div className="grid grid-cols-2 gap-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                <div className="grid gap-6">
@@ -95,14 +120,12 @@ export default function AddProduct() {
                      label="Product Name"
                      placeholder="Enter product name"
                      {...register("name")}
-                     autoComplete="off"
                      error={errors.name}
                   />
                   <Input
                      label="Category"
                      placeholder="Enter category"
                      {...register("category")}
-                     autoComplete="off"
                      error={errors.category}
                   />
                   <div className="grid grid-cols-2 gap-6">
@@ -158,7 +181,7 @@ export default function AddProduct() {
                         className="h-11 min-w-56 rounded-full"
                         disabled={loading}
                      >
-                        {loading ? "Adding..." : "Add Product"}
+                        {loading ? "Updating..." : "Update Product"}
                      </Button>
                   </div>
                </div>
@@ -183,35 +206,42 @@ export default function AddProduct() {
                      </div>
 
                      <div className="grid grid-cols-3 gap-2">
-                        {additionalImagesPreview.slice(0, 5).map((image, index) => (
-                           <div
-                              key={index}
-                              className="relative aspect-square flex-1 overflow-hidden rounded-lg bg-gray-100"
-                           >
-                              <Image
-                                 fill
-                                 src={image}
-                                 alt={`Additional image ${index + 1}`}
-                                 className="border-border border object-cover object-top"
-                              />
-                           </div>
-                        ))}
+                        {(additionalImagesPreview.length > 0
+                           ? additionalImagesPreview
+                           : product?.images || []
+                        )
+                           .slice(0, 5)
+                           .map((img, idx) => (
+                              <div
+                                 key={idx}
+                                 className="relative aspect-square flex-1 overflow-hidden rounded-lg bg-gray-100"
+                              >
+                                 <Image
+                                    fill
+                                    src={img}
+                                    alt={`Additional image ${idx + 1}`}
+                                    className="border-border border object-cover object-top"
+                                 />
+                              </div>
+                           ))}
                      </div>
 
                      <div className="space-y-1.5">
                         <div className="flex flex-col gap-y-0.5">
                            <h3 className="text-lg font-semibold">
-                              {formValues.name || "Product Name"}
+                              {displayValue(formValues.name, product?.name, "Product Name")}
                            </h3>
                            <p className="text-muted-foreground text-sm">
-                              {formValues.category || "Category"}
+                              {displayValue(formValues.category, product?.category, "Category")}
                            </p>
                         </div>
                         <div className="flex items-center gap-x-2">
-                           <p className="text-xl font-medium">৳{formValues.price || 0}</p>
+                           <p className="text-xl font-medium">
+                              ৳{displayValue(formValues.price, product?.price, 0)}
+                           </p>
                            <span className="text-muted-foreground">⋅</span>
                            <p className="text-muted-foreground text-sm">
-                              {formValues.stock || 0} in stock
+                              {displayValue(formValues.stock, product?.stock, 0)} in stock
                            </p>
                         </div>
                      </div>

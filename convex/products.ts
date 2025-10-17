@@ -136,7 +136,7 @@ export const updateProduct = mutation({
       try {
          await ctx.db.patch(id, data);
          return { success: true, message: "Product updated successfully" };
-      } catch (_) {
+      } catch (error) {
          throw new ConvexError("Failed to update product");
       }
    }
@@ -148,7 +148,7 @@ export const deleteProduct = mutation({
       try {
          await ctx.db.delete(id);
          return { success: true, message: "Product deleted successfully" };
-      } catch (_) {
+      } catch (error) {
          throw new ConvexError("Failed to delete product");
       }
    }
