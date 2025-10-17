@@ -50,6 +50,19 @@ export const createProduct = mutation({
    }
 });
 
+export const getAllProductsWithStore = query({
+   args: {},
+   handler: async (ctx) => {
+      const products = await ctx.db.query("products").collect();
+      return await Promise.all(
+         products.map(async (product) => {
+            const store = await ctx.db.get(product.storeId);
+            return { ...product, store };
+         })
+      );
+   }
+});
+
 export const getMyStoreProducts = query({
    args: {},
    handler: async (ctx) => {
@@ -72,5 +85,71 @@ export const getMyStoreProducts = query({
          .collect();
 
       return products;
+   }
+});
+
+export const getProductById = query({
+   args: { id: v.id("products") },
+   handler: async (ctx, { id }) => {
+      // Check if product exists
+      const product = await ctx.db.get(id);
+      if (!product) return null;
+
+      // Check if related store exists
+      const store = await ctx.db.get(product.storeId);
+      if (!store) return null;
+
+      // Get product images
+      const images = await ctx.db
+         .query("product_images")
+         .withIndex("by_product", (q) => q.eq("productId", id))
+         .collect();
+
+      return {
+         ...product,
+         images: images.map((img) => img.image),
+         store: {
+            id: store._id,
+            name: store.name,
+            logo: store.logo,
+            slug: store.slug
+         }
+      };
+   }
+});
+
+export const updateProduct = mutation({
+   args: {
+      id: v.id("products"),
+      data: v.object({
+         name: v.optional(v.string()),
+         image: v.optional(v.string()),
+         category: v.optional(v.string()),
+         description: v.optional(v.string()),
+         price: v.optional(v.number()),
+         stock: v.optional(v.number()),
+         total_likes: v.optional(v.number()),
+         isActive: v.optional(v.boolean())
+      })
+   },
+   handler: async (ctx, { id, data }) => {
+      try {
+         await ctx.db.patch(id, data);
+         return { success: true, message: "Product updated successfully" };
+      } catch (_) {
+         throw new ConvexError("Failed to update product");
+      }
+   }
+});
+
+export const deleteProduct = mutation({
+   args: { id: v.id("products") },
+   handler: async (ctx, { id }) => {
+      try {
+         await ctx.db.delete(id);
+         return { success: true, message: "Product deleted successfully" };
+      } catch (_) {
+         throw new ConvexError("Failed to delete product");
+      }
    }
 });
