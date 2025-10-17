@@ -80,3 +80,22 @@ export const toggleWishlistItem = mutation({
    }
 });
 
+export const clearWishlist = mutation({
+   args: {},
+   handler: async (ctx) => {
+      const userId = await getAuthUserId(ctx);
+      if (!userId) throw new ConvexError("Unauthorized");
+
+      // Get all wishlist items for the user
+      const wishlistItems = await ctx.db
+         .query("wishlist")
+         .withIndex("by_wishlist_user", (q) => q.eq("userId", userId))
+         .collect();
+
+      for (const item of wishlistItems) {
+         await ctx.db.delete(item._id);
+      }
+
+      return true;
+   }
+});

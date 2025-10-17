@@ -4,7 +4,7 @@ import { Heart } from "@/icons";
 import { cn } from "@/lib/utils";
 import { EmptyWishlist } from "@/icons";
 import { api } from "@/convex/_generated/api";
-import { Preloaded, usePreloadedQuery } from "convex/react";
+import { Preloaded, useMutation, usePreloadedQuery } from "convex/react";
 import ProductCard from "@/components/ProductCard";
 
 type preloadedWishlistItems = {
@@ -13,6 +13,7 @@ type preloadedWishlistItems = {
 
 export default function WishlistProducts({ preloadedWishlistItems }: preloadedWishlistItems) {
    const wishlistItems = usePreloadedQuery(preloadedWishlistItems);
+   const clearWishlist = useMutation(api.wishlist.clearWishlist);
 
    if (wishlistItems === undefined) return <LoadingSkeleton />;
    if (wishlistItems.length === 0) return <EmptyState />;
@@ -31,6 +32,7 @@ export default function WishlistProducts({ preloadedWishlistItems }: preloadedWi
                   </p>
                   <div className="h-8 w-[1px] bg-gray-200"></div>
                   <button
+                     onClick={() => clearWishlist()}
                      data-testid="clear-wishlist-button"
                      className="hover:text-primary transition-colors"
                   >
