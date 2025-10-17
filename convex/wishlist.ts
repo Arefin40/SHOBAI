@@ -36,6 +36,24 @@ export const getWishlistItems = query({
    }
 });
 
+export const getWishlistDetails = query({
+   args: {},
+   handler: async (ctx) => {
+      const userId = await getAuthUserId(ctx);
+      if (!userId) throw new ConvexError("Unauthorized");
+
+      const wishlistItems = await ctx.db
+         .query("wishlist")
+         .withIndex("by_wishlist_userId", (q) => q.eq("userId", userId))
+         .collect();
+
+      if (wishlistItems.length === 0) return { count: 0, items: [] };
+
+      const productIds = wishlistItems.map((item) => item.productId);
+      return { count: productIds.length, items: productIds };
+   }
+});
+
 export const toggleWishlistItem = mutation({
    args: {
       productId: v.id("products")
