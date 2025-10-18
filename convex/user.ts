@@ -1,6 +1,6 @@
-import { getAuthUserId } from "@convex-dev/auth/server";
+import { ConvexError, v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 /**
  * Get all users except the current authenticated user.
@@ -51,5 +51,31 @@ export const changeRole = mutation({
    handler: async (ctx, args) => {
       await ctx.db.patch(args.id, { role: args.role });
       return { success: true, message: "Role updated successfully" };
+   }
+});
+
+/**
+ * Get user's cart and wishlist items count
+ */
+export const getCartAndWishlistStats = query({
+   args: {},
+   handler: async (ctx) => {
+      const userId = await getAuthUserId(ctx);
+      if (!userId) throw new ConvexError("Unauthorized");
+
+      const cart = await ctx.db
+         .query("cart")
+         .withIndex("by_cart_userId", (q) => q.eq("userId", userId))
+         .first();
+
+      const wishlistItems = await ctx.db
+         .query("wishlist")
+         .withIndex("by_wishlist_userId", (q) => q.eq("userId", userId))
+         .collect();
+
+      return {
+         cartItems: cart?.totalQuantity || 0,
+         wishlistItems: wishlistItems.length
+      };
    }
 });

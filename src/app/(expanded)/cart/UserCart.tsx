@@ -89,6 +89,7 @@ function UserCart({ preloadedCart }: PreloadedCart) {
                               <Input
                                  readOnly
                                  value={item.quantity}
+                                 name={`${item.id}-quantity`}
                                  baseClassName="w-16 text-center appearance-none"
                               />
                               <button className="flex-center size-9 rounded-full bg-gray-100 transition-all hover:bg-gray-200 active:scale-90">
@@ -141,7 +142,7 @@ function UserCart({ preloadedCart }: PreloadedCart) {
                <h2 className="font-bold">Order Summary</h2>
 
                <div className="flex gap-2">
-                  <Input placeholder="Coupon Code" baseClassName="h-10" />
+                  <Input placeholder="Coupon Code" baseClassName="h-10" name="coupon" />
                   <button className="h-10">Apply</button>
                </div>
 
