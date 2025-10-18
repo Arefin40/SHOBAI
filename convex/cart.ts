@@ -200,3 +200,45 @@ export const updateCartItemQuantity = mutation({
       return true;
    }
 });
+
+export const deleteCartItem = mutation({
+   args: {
+      id: v.id("cart_items")
+   },
+   handler: async (ctx, { id }) => {
+      // Check if the user is authenticated
+      const userId = await getAuthUserId(ctx);
+      if (!userId) throw new ConvexError("Unauthorized");
+
+      // Check if the cart item exists
+      const cartItem = await ctx.db.get(id);
+      if (!cartItem) throw new ConvexError("Cart item not found");
+
+      // Check if related cart exists
+      const userCart = await ctx.db.get(cartItem.cartId);
+      if (!userCart) throw new ConvexError("Cart not found");
+
+      // Delete cart item
+      await ctx.db.delete(cartItem._id);
+
+      // Update cart totals
+      const allItems = await ctx.db
+         .query("cart_items")
+         .withIndex("by_cartitem_cartId", (q) => q.eq("cartId", cartItem.cartId))
+         .collect();
+
+      let totalQuantity = 0;
+      let totalPrice = 0;
+
+      for (const item of allItems) {
+         const prod = await ctx.db.get(item.productId);
+         if (prod) {
+            totalQuantity += item.quantity;
+            totalPrice += prod.price * item.quantity;
+         }
+      }
+
+      await ctx.db.patch(cartItem.cartId, { totalQuantity, totalPrice });
+      return true;
+   }
+});

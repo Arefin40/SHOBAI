@@ -19,6 +19,7 @@ function UserCart({ preloadedCart }: PreloadedCart) {
    const cart = usePreloadedQuery(preloadedCart);
    const cleartCart = useMutation(api.cart.clearCart);
    const updateQuantity = useMutation(api.cart.updateCartItemQuantity);
+   const deleteCartItem = useMutation(api.cart.deleteCartItem);
 
    if (cart === undefined) return <CartLoading />;
    if (!cart.totalQuantity) return <EmptyState />;
@@ -115,7 +116,10 @@ function UserCart({ preloadedCart }: PreloadedCart) {
                            {(item.price || 0) * item.quantity} Tk.
                         </div>
                         <div className="flex-center">
-                           <button className="flex-center group size-10 rounded-full bg-gray-100 transition-all hover:bg-gray-200 active:scale-90">
+                           <button
+                              onClick={() => deleteCartItem({ id: item.id })}
+                              className="flex-center group size-10 rounded-full bg-gray-100 transition-all hover:bg-gray-200 active:scale-90"
+                           >
                               <Trash2 className="text-muted-foreground size-4 group-hover:text-black" />
                            </button>
                         </div>
