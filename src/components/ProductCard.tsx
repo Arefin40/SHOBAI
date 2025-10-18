@@ -9,14 +9,14 @@ interface Product {
    name: string;
    image?: string;
    price: number;
-   store: {
+   store?: {
       slug?: string;
       name?: string;
       logo?: string;
    };
 }
 
-export default function ProductCard({ product }: { product: Product }) {
+function ProductCard({ product }: { product: Product }) {
    return (
       <div data-testid="product-card" key={product.id} className="group space-y-3 rounded-lg">
          <div className="border-border relative aspect-square overflow-hidden rounded-lg border">
@@ -38,7 +38,7 @@ export default function ProductCard({ product }: { product: Product }) {
                      className="text-foreground border-border flex flex-shrink-0 items-center gap-x-1 rounded-full border bg-white/75 p-3 py-2 text-sm shadow-2xs backdrop-blur-sm"
                   >
                      <Image
-                        src={(product.store?.logo as string) || "/default-store.png"}
+                        src={(product.store.logo as string) || "/default-store.png"}
                         alt={product.store?.name || "Store"}
                         width={20}
                         height={20}
@@ -67,3 +67,5 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
    );
 }
+
+export default ProductCard;

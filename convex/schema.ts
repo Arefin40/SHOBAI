@@ -81,7 +81,14 @@ const schema = defineSchema({
    })
       .index("by_user_post", ["userId", "postId"])
       .index("by_reacted_user", ["userId"])
-      .index("by_like_post", ["postId"])
+      .index("by_like_post", ["postId"]),
+
+   wishlist: defineTable({
+      userId: v.id("users"),
+      productId: v.id("products")
+   })
+      .index("by_wishlist_user", ["userId", "productId"])
+      .index("by_wishlist_userId", ["userId"])
 });
 
 export default schema;

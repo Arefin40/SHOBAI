@@ -3,7 +3,7 @@
 import React from "react";
 import { api } from "@/convex/_generated/api";
 import { usePreloadedQuery, Preloaded } from "convex/react";
-import ProductCard from "./ProductCard";
+import ProductCard from "@/components/ProductCard";
 
 function Products({
    preloadedProducts
