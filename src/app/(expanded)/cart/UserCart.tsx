@@ -6,6 +6,7 @@ import Image from "next/image";
 import { EmptyCart } from "@/icons";
 import { Input } from "@/components/ui/form";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { Preloaded, useMutation, usePreloadedQuery } from "convex/react";
 import { ArrowLeft, ArrowRight, Minus, Plus, Trash2 } from "lucide-react";
 import CartLoading from "./CartLoading";
@@ -17,9 +18,15 @@ type PreloadedCart = {
 function UserCart({ preloadedCart }: PreloadedCart) {
    const cart = usePreloadedQuery(preloadedCart);
    const cleartCart = useMutation(api.cart.clearCart);
+   const updateQuantity = useMutation(api.cart.updateCartItemQuantity);
 
    if (cart === undefined) return <CartLoading />;
    if (!cart.totalQuantity) return <EmptyState />;
+
+   const handleUpdateQuantity = async (id: Id<"cart_items">, quantity: number) => {
+      if (quantity < 1) return;
+      await updateQuantity({ id, quantity });
+   };
 
    return (
       <section className="box-container scroll-hide grid size-full gap-4 overflow-hidden overflow-y-auto xl:grid-cols-[1fr_20rem] xl:overflow-y-hidden">
@@ -74,7 +81,7 @@ function UserCart({ preloadedCart }: PreloadedCart) {
                            </Link>
                            <div className="space-y-0.5">
                               <Link
-                                 href={`/products/${item.id}/details`}
+                                 href={`/products/${item.productid}/details`}
                                  className="text-foreground font-semibold"
                               >
                                  {item.name}
@@ -83,7 +90,10 @@ function UserCart({ preloadedCart }: PreloadedCart) {
                         </div>
                         <div className="flex-center">
                            <div className="flex-center gap-x-2">
-                              <button className="flex-center size-9 rounded-full bg-gray-100 transition-all hover:bg-gray-200 active:scale-90">
+                              <button
+                                 onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                                 className="flex-center size-9 rounded-full bg-gray-100 transition-all hover:bg-gray-200 active:scale-90"
+                              >
                                  <Minus className="size-4" />
                               </button>
                               <Input
@@ -92,7 +102,10 @@ function UserCart({ preloadedCart }: PreloadedCart) {
                                  name={`${item.id}-quantity`}
                                  baseClassName="w-16 text-center appearance-none"
                               />
-                              <button className="flex-center size-9 rounded-full bg-gray-100 transition-all hover:bg-gray-200 active:scale-90">
+                              <button
+                                 onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                                 className="flex-center size-9 rounded-full bg-gray-100 transition-all hover:bg-gray-200 active:scale-90"
+                              >
                                  <Plus className="size-4" />
                               </button>
                            </div>

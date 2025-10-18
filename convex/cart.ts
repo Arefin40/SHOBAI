@@ -100,7 +100,9 @@ export const getCart = query({
          const prod = await ctx.db.get(p.productId);
          if (prod)
             products.push({
-               id: prod._id,
+               id: p._id,
+               cartId: p.cartId,
+               productid: p.productId,
                name: prod.name,
                image: prod.image,
                quantity: p.quantity,
@@ -144,6 +146,57 @@ export const clearCart = mutation({
       }
 
       await ctx.db.patch(id, { totalPrice: 0, totalQuantity: 0 });
+      return true;
+   }
+});
+
+export const updateCartItemQuantity = mutation({
+   args: {
+      id: v.id("cart_items"),
+      quantity: v.number()
+   },
+   handler: async (ctx, { id, quantity }) => {
+      // Check if the user is authenticated
+      const userId = await getAuthUserId(ctx);
+      if (!userId) throw new ConvexError("Unauthorized");
+
+      // Check if the cart item exists
+      const cartItem = await ctx.db.get(id);
+      if (!cartItem) throw new ConvexError("Cart item not found");
+
+      // Check if the product exists
+      const product = await ctx.db.get(cartItem.productId);
+      if (!product) throw new ConvexError("Product not found");
+
+      // Check if related cart exists
+      const userCart = await ctx.db.get(cartItem.cartId);
+      if (!userCart) throw new ConvexError("Cart not found");
+
+      // Validate update quantity
+      if (quantity < 0) throw new ConvexError("Quantity cannot be negative");
+      if (quantity > product.stock) throw new ConvexError("Quantity exceeds available stock");
+
+      // Update cart item quantity
+      await ctx.db.patch(cartItem._id, { quantity });
+
+      // Update cart totals
+      const allItems = await ctx.db
+         .query("cart_items")
+         .withIndex("by_cartitem_cartId", (q) => q.eq("cartId", userCart._id))
+         .collect();
+
+      let totalQuantity = 0;
+      let totalPrice = 0;
+
+      for (const item of allItems) {
+         const prod = await ctx.db.get(item.productId);
+         if (prod) {
+            totalQuantity += item.quantity;
+            totalPrice += prod.price * item.quantity;
+         }
+      }
+
+      await ctx.db.patch(userCart._id, { totalQuantity, totalPrice });
       return true;
    }
 });

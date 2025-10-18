@@ -100,7 +100,9 @@ const schema = defineSchema({
       cartId: v.id("cart"),
       productId: v.id("products"),
       quantity: v.number()
-   }).index("by_cartitem_cartId", ["cartId"])
+   })
+      .index("by_cartId_productId", ["cartId", "productId"])
+      .index("by_cartitem_cartId", ["cartId"])
 });
 
 export default schema;
