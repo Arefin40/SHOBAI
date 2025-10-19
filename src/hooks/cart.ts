@@ -147,7 +147,6 @@ export function useDeleteCartItem() {
                newDetails.totalQuantity = calculatedDetails.totalQuantity;
                newDetails.totalPrice = calculatedDetails.totalPrice.toFixed(2);
             }
-            newDetails;
             return newData;
          });
          queryClient.setQueryData(["cartDetails"], () => {

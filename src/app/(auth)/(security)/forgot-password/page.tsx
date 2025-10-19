@@ -34,11 +34,14 @@ export default function ResetPasswordPage() {
    }, [user, setValue]);
 
    const onSubmit = async ({ email }: FormData) => {
-      await authClient.forgetPassword(
+      await authClient.requestPasswordReset(
          { email, redirectTo: "/reset-password" },
          {
             onSuccess: () => {
-               toast("An email is sent to this email address");
+               toast.success("An email is sent to this email address");
+            },
+            onError: (ctx) => {
+               toast.error(ctx.error.message);
             }
          }
       );

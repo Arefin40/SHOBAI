@@ -31,8 +31,13 @@ function ResetPasswordContent() {
    });
 
    const onSubmit = async (data: FormData) => {
+      if (!token) {
+         toast.error("The reset password link is invalid or has expired.");
+         return;
+      }
+
       await authClient.resetPassword(
-         { newPassword: data.password, token: token ?? undefined },
+         { newPassword: data.password, token },
          {
             onError: (ctx) => {
                toast.error(ctx.error.message);
