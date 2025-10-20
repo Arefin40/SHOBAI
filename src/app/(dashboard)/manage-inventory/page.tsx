@@ -1,3 +1,6 @@
+// Reads the current session, so render per request instead of at build time.
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Pencil } from "lucide-react";

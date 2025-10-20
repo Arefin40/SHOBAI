@@ -1,3 +1,6 @@
+// Reads the current session, so render per request instead of at build time.
+export const dynamic = "force-dynamic";
+
 import DashboardContainer from "@/components/DashboardContainer";
 import Image from "next/image";
 import React from "react";

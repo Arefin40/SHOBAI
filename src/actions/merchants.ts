@@ -10,8 +10,6 @@ import { MerchantRequestApprovedEmail } from "@/emails/merchant-request-approved
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 interface MerchantApplicationData {
    id: string;
    nid: string;
@@ -94,6 +92,7 @@ export async function approveApplication(id: string) {
 
       // Send approval email
       const { email, name } = merchantUser[0];
+      const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({
          from: "SHOBAI <onboarding@resend.dev>",
          to: email,

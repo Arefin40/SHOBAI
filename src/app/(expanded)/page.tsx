@@ -6,6 +6,10 @@ import { getFollowedStores, getStores } from "@/actions/store";
 import { getAllPosts, getLinkedPost } from "@/actions/social";
 import { getRandomBestSeller } from "@/actions/products";
 
+// The page reads the session (headers) and live catalog data, so it is always
+// rendered per request. This also keeps `next build` from needing a database.
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
    const stores = await getStores();
    const followedStores = await getFollowedStores();

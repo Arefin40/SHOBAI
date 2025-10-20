@@ -5,8 +5,6 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export const auth = betterAuth({
    database: drizzleAdapter(db, {
       provider: "pg",
@@ -16,6 +14,8 @@ export const auth = betterAuth({
    emailAndPassword: {
       enabled: true,
       sendResetPassword: async ({ user, url }) => {
+         const resend = new Resend(process.env.RESEND_API_KEY);
+
          await resend.emails.send({
             from: "SHOBAI <orboarding@resend.dev>",
             to: user.email,

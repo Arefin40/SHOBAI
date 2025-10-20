@@ -1,6 +1,10 @@
 import { getAllProducts } from "@/actions/products";
 import ProductCard from "@/components/ProductCard";
 
+// Products come from the database, so render per request rather than trying to
+// reach the database at build time.
+export const dynamic = "force-dynamic";
+
 async function page() {
    const products = await getAllProducts();
 

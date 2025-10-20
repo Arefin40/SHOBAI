@@ -1,3 +1,6 @@
+// Reads live database data, so render per request instead of at build time.
+export const dynamic = "force-dynamic";
+
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
