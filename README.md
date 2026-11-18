@@ -2,7 +2,16 @@
 
 A digital marketplace designed to help Small and Medium Enterprises (SMEs) in Bangladesh establish their online presence, showcase products, and connect with customers.
 
-**Live Demo:** [SHOBAI](https://shobai-sme.vercel.app/)  
+**Live Demo:** [SHOBAI](https://shobai-sme.vercel.app/)
+
+<p align="center">
+   <picture>
+      <img src="public/images/preview-1.png" alt="Website Preview - 1" width="49%"/>
+   </picture>
+   <picture>
+      <img src="public/images/preview-2.png" alt="Website Preview - 2" width="49%"/>
+   </picture>
+</p>
 
 ## Tech Stack
 
